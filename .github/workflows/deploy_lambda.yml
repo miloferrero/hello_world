@@ -3,42 +3,37 @@ name: Deploy to AWS Lambda
 on:
   push:
     branches:
-      - main  # Deploy whenever changes are pushed to the main branch
+      - main  # Ejecutar el workflow cada vez que haya un push a la rama main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
+      # 1. Checkout el código desde el repositorio
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Set up Python
+      # 2. Configurar AWS CLI usando el Action oficial
+      - name: Configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Cambiar a tu región si es diferente
+
+      # 3. Configurar Python
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.x
+          python-version: '3.x'
 
-      # Install AWS CLI
-      - name: Install AWS CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
-
-      # Zip the file
+      # 4. Crear el archivo ZIP con el código de la Lambda
       - name: Zip the Lambda function
-        run: zip Hello_World.zip Hello_World.py
+        run: zip -r Hello_World.zip Hello_World.py
 
-      # Deploy to AWS Lambda
+      # 5. Subir y desplegar a AWS Lambda
       - name: Deploy to AWS Lambda
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
         run: |
           aws lambda update-function-code \
             --function-name HelloWorldLambda \
