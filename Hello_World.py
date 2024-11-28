@@ -1,20 +1,18 @@
 def lambda_handler(event, context):
     """
-    AWS Lambda function handler.
-
+    AWS Lambda handler function.
+    
     Args:
-    - event: The event data that triggers the Lambda function.
-    - context: Information about the invocation, function, and runtime environment.
-
+    - event: The data that triggers the Lambda function (sent by API Gateway or other AWS services).
+    - context: Provides runtime information about the Lambda invocation.
+    
     Returns:
-    - dict: A response object containing a status code and a message.
+    - A dictionary with an HTTP status code and a body message.
     """
-    print("Hello, Militooo! The Lambda function was triggered.")
+    print("¡Hola, Militooo! Lambda fue invocada con éxito.")  # Esto aparecerá en los logs de CloudWatch
     
-    # Example response
-    response = {
+    # Retornamos una respuesta HTTP con código 200 y un mensaje en el body
+    return {
         "statusCode": 200,
-        "body": "Hello, World! Welcome to AWS Lambda!"
+        "body": "¡Hola, Militooo! Esto está funcionando desde AWS Lambda."
     }
-    
-    return response
